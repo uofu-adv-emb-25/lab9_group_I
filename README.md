@@ -21,7 +21,7 @@ These are invariants that are given to us in the description
 - This system does not account for two trains in the system because if one train leaves, then that triggers the raise state even though another train could still be approaching and in the system
 
 
-## Prove It:
+## Table FSM
 | number | arms_down | alarm_on | northbound_present | southbound_present | north_approach | south_approach | north_depart | south_depart | ringing | safety_hazard |
 |--------|-----------|----------|--------------------|--------------------|----------------|----------------|--------------|--------------|---------|---------------|
 | 0      | 0         | 0        | 0                  | 0                  | 6              | 5              | 0            | 0            |         |               |
@@ -41,6 +41,4 @@ These are invariants that are given to us in the description
 | 14     | 1         | 1        | 1                  | 0                  | 14             | 15             | tc=0? 12 : 14| x            |         |               |
 | 15     | 1         | 1        | 1                  | 1                  | 15             | 15             | tc=0? 13 : 15| tc=0? 14 : 15|         |               |
 
-| number | invariant |
-|--------|-----------|
-| 16     |           |
+## FSM Drawing
