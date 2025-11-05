@@ -1,50 +1,35 @@
 digraph {
-    0[label="idle"];
-    0 -> 6[label="north_approach"];
-    0 -> 5[label="south_approach"];
-    4[label="ringing, arms up"];
-    4 -> 6[label="north_approach"];
-    4 -> 5[label="south_approach"];
-    4 -> 0[label="elapsed"];
-    5[label="ringing, arms up, south_approach"];
-    5 -> 7[label="north_approach"];
-    5 -> 5[label="south_approach"];
-    5 -> 13[label="elapsed"];
-    5 -> 4[label="south_depart && train_count == 0"];
-    5 -> 5[label="south_depart && train_count > 0"];
-    6[label="ringing, arms up, north_approach"];
-    6 -> 6[label="north_approach"];
-    6 -> 7[label="south_approach"];
-    6 -> 14[label="elapsed"];
-    6 -> 4[label="north_depart && train_count == 0"];
-    6 -> 6[label="north_depart && train_count > 0"];
-    7[label="ringing, arms up, north_approach"];
-    7 -> 7[label="north_approach"];
-    7 -> 7[label="south_approach"];
-    7 -> 15[label="elapsed"];
-    7 -> 7[label="north_depart && train_count == 0"];
-    7 -> 5[label="north_depart && train_count > 0"];
-    7 -> 7[label="south_depart && train_count == 0"];
-    7 -> 6[label="south_depart && train_count > 0"];
-    12[label="ringing, arms up, north_approach"];
-    12 -> 14[label="north_approach"];
-    12 -> 13[label="south_approach"];
-    12 -> 4[label="elapsed"];
-    13[label="ringing, arms up, north_approach"];
-    13 -> 15[label="north_approach"];
-    13 -> 13label="south_approach"];
-    13 -> 12[label="south_depart && train_count == 0"];
-    13 -> 13[label="south_depart && train_count > 0"];
-    14[label="ringing, arms up, north_approach"];
-    14 -> 14[label="north_approach"];
-    14 -> 15[label="south_approach"];
-    14 -> 12[label="north_depart && train_count == 0"];
-    14 -> 14[label="north_depart && train_count > 0"];
-    15[label="ringing, arms up, north_approach"];
-    15 -> 15[label="north_approach"];
-    15 -> 15[label="south_approach"];
-    15 -> 13[label="north_depart && train_count == 0"];
-    15 -> 15[label="north_depart && train_count > 0"];
-    15 -> 14[label="south_depart && train_count == 0"];
-    15 -> 15[label="south_depart && train_count > 0"];
+  // Global graph tuning (readability)
+  rankdir=LR;
+  nodesep=0.5; ranksep=0.8;
+  node [shape=ellipse, width=1.6, height=0.9, fontname="Helvetica"];
+  edge [fontname="Helvetica", arrowsize=0.8, penwidth=1.2];
+
+  0 [label="idle"];
+  4 [label="ring, arms up"];
+  5 [label="ring, arms up,\ntrain_psnt"];
+  12 [label="ring, arms down"];
+  13 [label="ring, arms down,\ntrain_psnt"];
+
+  // De-duplicate parallel edges by merging labels
+  0 -> 5 [label="n_ap | s_ap"];
+  4 -> 5 [label="n_ap | s_ap"];
+  4:s -> 0:s [
+    label="elapsed",
+    minlen=2,
+    weight=0,
+    constraint=false
+  ];
+  5 -> 4 [label="(s_dep | n_dep) && tc == 0"];
+  5 -> 13 [label="elapsed"];
+  12 -> 13 [label="n_ap | s_ap"];
+  12 -> 4  [label="elapsed"];
+  13 -> 12 [label="(s_dep | n_dep) && tc == 0"];
+
+  // Put the two self-loops on opposite sides using compass ports
+  5:n  -> 5:n  [label="n_ap | s_ap\ntc++",  labeldistance=1.6, minlen=1];
+  5:s  -> 5:s  [label="n_dep | s_dep\ntc--", labeldistance=1.6, minlen=2];
+
+  13:n -> 13:n [label="n_ap | s_ap\ntc++",  labeldistance=1.6, minlen=1];
+  13:w -> 13:w [label="n_dep | s_dep\ntc--", labeldistance=1.6, minlen=2];
 }
