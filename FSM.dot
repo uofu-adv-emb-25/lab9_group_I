@@ -1,35 +1,50 @@
-// digraph {
-//     idle[label="idle"];
-//     idle -> arriving[label="nb_approach or sb_approach"];
-//     arriving[label="ringing, arms up"];
-//     arriving -> closed[label="elapsed"];
-//     closed[label="ringing, arms down"];
-//     closed -> departing[label="nb_depart or sb_depart"];
-//     departing[label="ringing, arms_up"];
-//     departing -> idle[label="elapsed"];
-// }
-
-
-<!-- ## Table FSM
-| number | arms_down | alarm_on | northbound_present | southbound_present | north_approach | south_approach | north_depart | south_depart | ringing | safety_hazard |
-|--------|-----------|----------|--------------------|--------------------|----------------|----------------|--------------|--------------|---------|---------------|
-| 0      | 0         | 0        | 0                  | 0                  | 6              | 5              | 0            | 0            |         |               |
-| 1      | 0         | 0        | 0                  | 1                  |                |                |              |              |         | 2             |
-| 2      | 0         | 0        | 1                  | 0                  |                |                |              |              |         | 2             |
-| 3      | 0         | 0        | 1                  | 1                  |                |                |              |              |         | 2             |
-| 4      | 0         | 1        | 0                  | 0                  | 6              | 5              | x            | x            | 10s\0   |               |
-| 5      | 0         | 1        | 0                  | 1                  | 7              | 5              | x            | tc=0? 4 : 5  | 10s\13  |               |
-| 6      | 0         | 1        | 1                  | 0                  | 6              | 7              | tc=0? 4 : 6  | x            | 10s\14  |               |
-| 7      | 0         | 1        | 1                  | 1                  | 7              | 7              | tc>0? 7 : 5  | tc>0? 7 : 6  | 10s\15  |               |
-| 8      | 1         | 0        | 0                  | 0                  |                |                |              |              |         | 2             |
-| 9      | 1         | 0        | 0                  | 1                  |                |                |              |              |         | 2             |
-| 10     | 1         | 0        | 1                  | 0                  |                |                |              |              |         | 2             |
-| 11     | 1         | 0        | 1                  | 1                  |                |                |              |              |         | 2             |
-| 12     | 1         | 1        | 0                  | 0                  | 14             | 13             | x            | x            | 10s\4   |               |
-| 13     | 1         | 1        | 0                  | 1                  | 15             | 13             | x            | tc=0? 12 : 13|         |               |
-| 14     | 1         | 1        | 1                  | 0                  | 14             | 15             | tc=0? 12 : 14| x            |         |               |
-| 15     | 1         | 1        | 1                  | 1                  | 15             | 15             | tc=0? 13 : 15| tc=0? 14 : 15|         |               | -->
-
 digraph {
     0[label="idle"];
+    0 -> 6[label="north_approach"];
+    0 -> 5[label="south_approach"];
+    4[label="ringing, arms up"];
+    4 -> 6[label="north_approach"];
+    4 -> 5[label="south_approach"];
+    4 -> 0[label="elapsed"];
+    5[label="ringing, arms up, south_approach"];
+    5 -> 7[label="north_approach"];
+    5 -> 5[label="south_approach"];
+    5 -> 13[label="elapsed"];
+    5 -> 4[label="south_depart && train_count == 0"];
+    5 -> 5[label="south_depart && train_count > 0"];
+    6[label="ringing, arms up, north_approach"];
+    6 -> 6[label="north_approach"];
+    6 -> 7[label="south_approach"];
+    6 -> 14[label="elapsed"];
+    6 -> 4[label="north_depart && train_count == 0"];
+    6 -> 6[label="north_depart && train_count > 0"];
+    7[label="ringing, arms up, north_approach"];
+    7 -> 7[label="north_approach"];
+    7 -> 7[label="south_approach"];
+    7 -> 15[label="elapsed"];
+    7 -> 7[label="north_depart && train_count == 0"];
+    7 -> 5[label="north_depart && train_count > 0"];
+    7 -> 7[label="south_depart && train_count == 0"];
+    7 -> 6[label="south_depart && train_count > 0"];
+    12[label="ringing, arms up, north_approach"];
+    12 -> 14[label="north_approach"];
+    12 -> 13[label="south_approach"];
+    12 -> 4[label="elapsed"];
+    13[label="ringing, arms up, north_approach"];
+    13 -> 15[label="north_approach"];
+    13 -> 13label="south_approach"];
+    13 -> 12[label="south_depart && train_count == 0"];
+    13 -> 13[label="south_depart && train_count > 0"];
+    14[label="ringing, arms up, north_approach"];
+    14 -> 14[label="north_approach"];
+    14 -> 15[label="south_approach"];
+    14 -> 12[label="north_depart && train_count == 0"];
+    14 -> 14[label="north_depart && train_count > 0"];
+    15[label="ringing, arms up, north_approach"];
+    15 -> 15[label="north_approach"];
+    15 -> 15[label="south_approach"];
+    15 -> 13[label="north_depart && train_count == 0"];
+    15 -> 15[label="north_depart && train_count > 0"];
+    15 -> 14[label="south_depart && train_count == 0"];
+    15 -> 15[label="south_depart && train_count > 0"];
 }
